@@ -64,7 +64,7 @@
         
         button{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
         button.secondary{background:#e6eefc;color:var(--accent);border:1px solid #d6e4ff}
-        .table{width:100%;border-collapse:collapse;margin-top:12px}
+        .table{width:100%;border-collapse:collapse;margin-top:12px;min-width:600px;}
         .table th, .table td{padding:12px 8px;  text-align:left;border-bottom:1px solid #f1f5fb}
         .table th{color:var(--muted);font-size:0.9rem}
         .meta{color:#777;font-size:0.9rem}
@@ -72,6 +72,11 @@
         .tag{display:inline-block;background:#f0f6ff;color:var(--accent);padding:4px 8px;border-radius:999px;font-size:0.85rem;margin-right:6px; margin-top:4px;}
         .flag {display:inline-block; vertical-align: middle; margin-right:6px}
         .empty{padding:28px;text-align:center;color:#999}
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body>
@@ -83,13 +88,14 @@
 
         <div class="card" style="display:flex;align-items:center;justify-content:space-between">
             <div>
-                <div style="font-weight:600;margin-bottom:6px"><i class="fa-solid fa-graduation-cap"></i> Telnet 连接必看教程</div>
+                <div style="font-weight:600;margin-bottom:6px"><i class="fa-solid fa-graduation-cap"></i> Telnet 连接教程</div>
                 <div class="small">不知道如何连接 Telnet BBS？这里有启用 Telnet 客户端并连接的教程。</div>
             </div>
             <a href="t.html" target="_blank" style="text-decoration:none">
-                <button style="white-space:nowrap">查看连接教程 <i class="fa-solid fa-arrow-right"></i></button>
+                <button style="white-space:nowrap">连接教程 <i class="fa-solid fa-arrow-right"></i></button>
             </a>
         </div>
+
         <div class="card">
             <div class="controls">
                 <div class="search">
@@ -113,38 +119,37 @@
         </div>
 
         <div id="listCard" class="card">
-            <table class="table" id="bbsTable" aria-live="polite">
-                <thead>
-                    <tr>
-                        <th>站点 / 描述</th>
-                        <th>地址</th>
-                        <th>协议</th>
-                        <th>国家</th>
-                    </tr>
-                </thead>
-                <tbody id="rows"></tbody>
-            </table>
+            <div class="table-wrap">
+                <table class="table" id="bbsTable" aria-live="polite">
+                    <thead>
+                        <tr>
+                            <th>站点 / 描述</th>
+                            <th>地址</th>
+                            <th>协议</th>
+                            <th>国家</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
             <div id="empty" class="empty" style="display:none">暂无收录。</div>
         </div>
-
-        
     </div>
+
     <script>
         let entries = [
            {name:"8bitBoyz", desc:"复古主机爱好者", proto:"telnet", host:"bbs.8bitboyz.com", port:6502, country:"us", tags:["像素","主题"], home:""},
-            {name:"水木清华社区", desc:"中文 BBS", proto:"telnet", host:"bbs.newsmth.net", port:23, country:"cn", tags:["中文"], home:"http://www.newsmth.net"},
-            {name:"Telehack", desc:"模拟老式计算机网络的复古系统", proto:"telnet", host:"telehack.com", port:23, country:"us", tags:["复古","命令行"], home:"https://telehack.com"},
-            {name:"Freechess", desc:"互联网国际象棋服务器 FICS", proto:"telnet", host:"freechess.org", port:5000, country:"us", tags:["游戏","国际象棋"], home:"https://www.freechess.org"}
+           {name:"水木清华社区", desc:"中文 BBS", proto:"telnet", host:"bbs.newsmth.net", port:23, country:"cn", tags:["中文"], home:"http://www.newsmth.net"},
+           {name:"Telehack", desc:"模拟老式计算机网络的复古系统", proto:"telnet", host:"telehack.com", port:23, country:"us", tags:["复古","命令行"], home:"https://telehack.com"},
+           {name:"Freechess", desc:"互联网国际象棋服务器 FICS", proto:"telnet", host:"freechess.org", port:5000, country:"us", tags:["游戏","国际象棋"], home:"https://www.freechess.org"}
         ]; 
 
-        // DOM
         const rowsEl = document.getElementById('rows');
         const emptyEl = document.getElementById('empty');
         const qEl = document.getElementById('q');
         const countryFilter = document.getElementById('countryFilter');
         const protoFilter = document.getElementById('protoFilter');
 
-        // render
         function render(){
             const q = qEl.value.trim().toLowerCase();
             const c = countryFilter.value;
@@ -177,19 +182,16 @@
                 const protoTd = document.createElement('td');
                 const countryTd = document.createElement('td');
 
-                // name + desc + tags
                 let tagsHtml = (e.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
                 nameTd.innerHTML = `<div style="font-weight:600">${escapeHtml(e.name)}</div>
                                      <div class="small" style="margin-top:6px">${escapeHtml(e.desc||'')}</div>
                                      <div style="margin-top:8px">${tagsHtml}</div>`;
 
-                // addr
                 const hostDisplay = escapeHtml(e.host || '');
                 addrTd.innerHTML = `<div style="font-family:var(--mono)">${hostDisplay}${e.port?(':'+e.port):''}</div>
                                      <div class="small" style="margin-top:6px"><a href="${makeConnectLink(e)}" target="_blank" rel="noreferrer">连接/尝试</a>${e.home? ' · <a href="'+escapeAttr(e.home)+'" target="_blank">主页</a>':''}</div>`;
 
                 protoTd.textContent = (e.proto||'').toUpperCase();
-
                 countryTd.innerHTML = countryFlagHtml(e.country) + (countryName(e.country) || '<span class="small">未知</span>');
 
                 tr.appendChild(nameTd);
@@ -200,10 +202,8 @@
             });
         }
 
-        // helpers (保持不变)
         function countryFlagHtml(code){
             if(!code) return '';
-            // flag-icon uses "flag-icon-xx" where xx is country code; adjust for some codes
             const map = {cn:'cn', us:'us', uk:'gb', tw:'tw', jp:'jp'};
             const c = map[code]||code;
             return `<span class="flag flag-icon flag-icon-${c}" title="${countryName(code)}"></span>`;
@@ -225,13 +225,8 @@
         function escapeHtml(s){ if(!s) return ''; return (s+'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
         function escapeAttr(s){ return escapeHtml(s); }
 
-        // search events (保持不变)
         [qEl, countryFilter, protoFilter].forEach(el=>el.addEventListener('input', render));
-
-        // initial render
         render();
-
-        // end
     </script>
 </body>
 </html>
