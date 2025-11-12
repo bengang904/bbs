@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <link rel="icon" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <link rel="apple-touch-icon-precomposed" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <meta name="msapplication-TileImage" content="https://bbs.2024-10-24.zip/logo.jpg">
+    <title>BBS 地址收录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"/>
+
+    <style>
+        :root{
+            --bg:#f6f8fb; --card:#fff; --accent:#0b66ff; --muted:#666;
+            --mono: Consolas, "Courier New", monospace;
+            --input-bg: #fff;
+            --input-border: #d6e4ff;
+            --input-focus-border: var(--accent);
+            --input-shadow: rgba(12, 20, 40, 0.04);
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+            background:var(--bg); color:#222; padding:28px;
+        }
+        .wrap{max-width:1100px;margin:0 auto;}
+        header{display:flex;align-items:center;gap:16px; margin-bottom:18px}
+        header h1{margin:0;font-size:1.4rem;color:var(--accent)}
+        .card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(12,20,40,.06);margin-bottom:16px}
+        .controls{display:flex;gap:12px;flex-wrap:wrap}
+        .search{flex:1;display:flex;gap:12px;  flex-wrap: wrap;} 
+        
+        .search input, .search select {
+            flex: 1; 
+            padding: 10px 12px; 
+            border-radius: 8px; 
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            min-width: 150px; 
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px var(--input-shadow);
+            -webkit-appearance: none; 
+            -moz-appearance: none;
+            appearance: none;
+            color: #333;
+        }
+
+        .search select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 30px;
+        }
+        
+        .search input:focus, .search select:focus {
+            border-color: var(--input-focus-border);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(11, 102, 255, 0.2); 
+        }
+        
+        button{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
+        button.secondary{background:#e6eefc;color:var(--accent);border:1px solid #d6e4ff}
+        .table{width:100%;border-collapse:collapse;margin-top:12px}
+        .table th, .table td{padding:12px 8px;  text-align:left;border-bottom:1px solid #f1f5fb}
+        .table th{color:var(--muted);font-size:0.9rem}
+        .meta{color:#777;font-size:0.9rem}
+        .small{font-size:0.85rem;color:#666}
+        .tag{display:inline-block;background:#f0f6ff;color:var(--accent);padding:4px 8px;border-radius:999px;font-size:0.85rem;margin-right:6px; margin-top:4px;}
+        .flag {display:inline-block; vertical-align: middle; margin-right:6px}
+        .empty{padding:28px;text-align:center;color:#999}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>BBS 地址收录</h1>
+            <div class="meta">浏览 Telnet/SSH/Web BBS 列表</div>
+        </header>
+
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <div style="font-weight:600;margin-bottom:6px"><i class="fa-solid fa-graduation-cap"></i> Telnet 连接必看教程</div>
+                <div class="small">不知道如何连接 Telnet BBS？这里有启用 Telnet 客户端并连接的教程。</div>
+            </div>
+            <a href="t.html" target="_blank" style="text-decoration:none">
+                <button style="white-space:nowrap">查看连接教程 <i class="fa-solid fa-arrow-right"></i></button>
+            </a>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <div class="search">
+                    <input id="q" placeholder="搜索：站点名、描述、域名或国家..." />
+                    <select id="countryFilter">
+                        <option value="">所有国家/地区</option>
+                        <option value="cn">中国</option>
+                        <option value="us">美国</option>
+                        <option value="tw">台湾</option>
+                        <option value="uk">英国</option>
+                        <option value="jp">日本</option>
+                    </select>
+                    <select id="protoFilter">
+                        <option value="">所有协议</option>
+                        <option value="telnet">Telnet</option>
+                        <option value="ssh">SSH</option>
+                        <option value="web">Web</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="listCard" class="card">
+            <table class="table" id="bbsTable" aria-live="polite">
+                <thead>
+                    <tr>
+                        <th>站点 / 描述</th>
+                        <th>地址</th>
+                        <th>协议</th>
+                        <th>国家</th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+            <div id="empty" class="empty" style="display:none">暂无收录。</div>
+        </div>
+
+        
+    </div>
+    <script>
+        let entries = [
+           {name:"8bitBoyz", desc:"复古主机爱好者", proto:"telnet", host:"bbs.8bitboyz.com", port:6502, country:"us", tags:["像素","主题"], home:""},
+            {name:"水木清华社区", desc:"中文 BBS", proto:"telnet", host:"bbs.newsmth.net", port:23, country:"cn", tags:["中文"], home:"http://www.newsmth.net"},
+            {name:"Telehack", desc:"模拟老式计算机网络的复古系统", proto:"telnet", host:"telehack.com", port:23, country:"us", tags:["复古","命令行"], home:"https://telehack.com"},
+            {name:"Freechess", desc:"互联网国际象棋服务器 FICS", proto:"telnet", host:"freechess.org", port:5000, country:"us", tags:["游戏","国际象棋"], home:"https://www.freechess.org"}
+        ]; 
+
+        // DOM
+        const rowsEl = document.getElementById('rows');
+        const emptyEl = document.getElementById('empty');
+        const qEl = document.getElementById('q');
+        const countryFilter = document.getElementById('countryFilter');
+        const protoFilter = document.getElementById('protoFilter');
+
+        // render
+        function render(){
+            const q = qEl.value.trim().toLowerCase();
+            const c = countryFilter.value;
+            const p = protoFilter.value;
+            rowsEl.innerHTML = '';
+            
+            const filtered = entries.filter(e=>{
+                if(c && e.country !== c) return false;
+                if(p && e.proto !== p) return false;
+                if(!q) return true;
+                return (e.name||'').toLowerCase().includes(q) ||
+                       (e.desc||'').toLowerCase().includes(q) ||
+                       (e.host||'').toLowerCase().includes(q) ||
+                       (e.tags||[]).join(',').toLowerCase().includes(q);
+            });
+            
+            if(filtered.length===0){
+                emptyEl.style.display='block';
+                document.getElementById('bbsTable').style.display='none';
+                return;
+            } else {
+                emptyEl.style.display='none';
+                document.getElementById('bbsTable').style.display='';
+            }
+            
+            filtered.forEach((e)=>{
+                const tr = document.createElement('tr');
+                const nameTd = document.createElement('td');
+                const addrTd = document.createElement('td');
+                const protoTd = document.createElement('td');
+                const countryTd = document.createElement('td');
+
+                // name + desc + tags
+                let tagsHtml = (e.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+                nameTd.innerHTML = `<div style="font-weight:600">${escapeHtml(e.name)}</div>
+                                     <div class="small" style="margin-top:6px">${escapeHtml(e.desc||'')}</div>
+                                     <div style="margin-top:8px">${tagsHtml}</div>`;
+
+                // addr
+                const hostDisplay = escapeHtml(e.host || '');
+                addrTd.innerHTML = `<div style="font-family:var(--mono)">${hostDisplay}${e.port?(':'+e.port):''}</div>
+                                     <div class="small" style="margin-top:6px"><a href="${makeConnectLink(e)}" target="_blank" rel="noreferrer">连接/尝试</a>${e.home? ' · <a href="'+escapeAttr(e.home)+'" target="_blank">主页</a>':''}</div>`;
+
+                protoTd.textContent = (e.proto||'').toUpperCase();
+
+                countryTd.innerHTML = countryFlagHtml(e.country) + (countryName(e.country) || '<span class="small">未知</span>');
+
+                tr.appendChild(nameTd);
+                tr.appendChild(addrTd);
+                tr.appendChild(protoTd);
+                tr.appendChild(countryTd);
+                rowsEl.appendChild(tr);
+            });
+        }
+
+        // helpers (保持不变)
+        function countryFlagHtml(code){
+            if(!code) return '';
+            // flag-icon uses "flag-icon-xx" where xx is country code; adjust for some codes
+            const map = {cn:'cn', us:'us', uk:'gb', tw:'tw', jp:'jp'};
+            const c = map[code]||code;
+            return `<span class="flag flag-icon flag-icon-${c}" title="${countryName(code)}"></span>`;
+        }
+        function countryName(code){
+            const map = {cn:'中国', us:'美国', uk:'英国', tw:'台湾', jp:'日本'};
+            return map[code]||'';
+        }
+        function makeConnectLink(e){
+            if(!e || !e.proto || !e.host) return '#';
+            if(e.proto === 'telnet') return 'telnet://' + e.host + (e.port?(':'+e.port):'');
+            if(e.proto === 'ssh') return 'ssh://' + e.host + (e.port?(':'+e.port):'');
+            if(e.proto === 'web') {
+                if(e.home) return e.home;
+                return (e.port ? ('http://'+e.host+':'+e.port) : ('http://'+e.host));
+            }
+            return '#';
+        }
+        function escapeHtml(s){ if(!s) return ''; return (s+'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        function escapeAttr(s){ return escapeHtml(s); }
+
+        // search events (保持不变)
+        [qEl, countryFilter, protoFilter].forEach(el=>el.addEventListener('input', render));
+
+        // initial render
+        render();
+
+        // end
+    </script>
+</body>
+</html>
