@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <link rel="icon" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <link rel="apple-touch-icon-precomposed" href="https://bbs.2024-10-24.zip/logo.jpg">
+    <meta name="msapplication-TileImage" content="https://bbs.2024-10-24.zip/logo.jpg">
+  <title>启用 Telnet 客户端并连接的教程</title>
+
+  <!-- 引入 Font Awesome 和 Flag Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+
+  <style>
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f9fafc;
+      color: #222;
+      line-height: 1.8;
+      padding: 40px;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #0b66ff;
+      font-size: 1.6em;
+      text-align: center;
+    }
+    .step {
+      background: #f0f5ff;
+      border-left: 4px solid #0b66ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+    }
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fdfdfd;
+      font-family: monospace;
+      box-shadow: inset 0 -1px 0 #aaa;
+      line-height: 1.3;
+    }
+    .kbd i {
+      color: #000000;
+    }
+    .terminal {
+      background: #0d1117;
+      color: #9efc9e;
+      font-family: Consolas, "Courier New", monospace;
+      padding: 24px 16px 14px;
+      border-radius: 6px;
+      margin-top: 20px;
+      overflow-x: auto;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .cmd-line {
+      display: block;
+      color: #9efc9e;
+      margin: 4px 0;
+    }
+    .cmd-prompt {
+      color: #58a6ff;
+    }
+    hr {
+      border: none;
+      border-top: 2px dashed #ccc;
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fa-brands fa-windows"></i> Windows 启用 Telnet 教程</h1>
+
+    <div class="step">
+      <strong>步骤 1：</strong> 按下 <span class="kbd"><i class="fa-brands fa-windows"></i></span> + <span class="kbd">R</span> 打开 “运行” 窗口。
+    </div>
+
+    <div class="step">
+      <strong>步骤 2：</strong> 在输入框中键入：<code>cmd</code>
+    </div>
+
+    <div class="step">
+      <strong>步骤 3：</strong> 按下 <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Enter</span>，  
+      以管理员身份打开命令提示符。  
+    </div>
+
+    <div class="step">
+      <strong>步骤 4：</strong> 在管理员命令提示符中输入以下命令，并按回车：
+      <div class="terminal">
+        <span class="cmd-prompt">C:\Users\xxx&gt;</span>
+        <span class="cmd-line">dism /online /Enable-Feature /FeatureName:TelnetClient</span>
+      </div>
+      <p>等待操作完成后，第一次可能会提示重启电脑。</p>
+    </div>
+
+    <div class="step">
+      <strong>步骤 5：</strong> 重启后，打开 <code>cmd</code>，输入命令并按回车：
+      <div class="terminal">
+        <span class="cmd-prompt">C:\Users\xxx&gt;</span>
+        <span class="cmd-line">telnet 【服务器IP或域名】</span>
+      </div>
+      <p>即可远程连接到目标服务器。</p>
+    </div>
+
+    <hr>
+
+    <h1><i class="fa-brands fa-apple"></i> macOS 启用 Telnet 教程</h1>
+
+    <div class="step">
+      <strong>步骤 1：</strong> 按下 <span class="kbd">⌘</span> + <span class="kbd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>，
+       搜索：<strong>终端</strong>，并打开。也可在应用程序中找到。
+    </div>
+
+    <div class="step">
+      <strong>步骤 2：</strong> 验证 Homebrew 是否安装，若无即会安装。
+      <div class="terminal">
+        <span class="cmd-prompt">~ %</span>
+        <span class="cmd-line">command -v brew >/dev/null 2>&1 || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
+      </div>
+      <p>安装 telnet</p>
+      <div class="terminal">
+        <span class="cmd-prompt">~ %</span>
+        <span class="cmd-line">brew install telnet</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <strong>步骤 3：</strong> 安装完成后，在终端输入：
+      <div class="terminal">
+        <span class="cmd-prompt">~ %</span>
+        <span class="cmd-line">telnet 【服务器IP或域名】</span>
+      </div>
+      <p>即可远程连接到目标服务器。</p>
+    </div>
+
+  </div>
+</body>
+</html>
